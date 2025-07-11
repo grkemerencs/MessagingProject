@@ -1,28 +1,34 @@
 package com.example.notificationproject.config;
 
 import com.example.notificationproject.Enum.Channel;
-import com.example.notificationproject.service.BaseMessagingService;
-import com.example.notificationproject.service.EmailMessagingService;
-import com.example.notificationproject.service.FirebaseMessagingServiceService;
-import com.example.notificationproject.service.TelegramMessagingService;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import com.example.notificationproject.service.messaging.BaseMessagingService;
+import com.example.notificationproject.service.messaging.EmailMessagingService;
+import com.example.notificationproject.service.messaging.FirebaseMessagingServiceService;
+import com.example.notificationproject.service.messaging.TelegramMessagingService;
+import lombok.Getter;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Configuration
+
+@Component
 public class MessagingServiceConfig {
-    @Bean
-    public Map<Channel, BaseMessagingService> messagingServiceMapper(
+    // bu klassı messaging service selector ve messaging service config olarak ikiye mi ayırlamıyım yoksa sadece selector olarak mı güncellemeyliyim?
+    private final Map<Channel, BaseMessagingService> messagingServiceMap = new HashMap<>();
+
+    public MessagingServiceConfig(
             EmailMessagingService emailService,
             TelegramMessagingService telegramService,
             FirebaseMessagingServiceService notificationService
     ) {
-        Map<Channel, BaseMessagingService> map = new HashMap<>();
-        map.put(Channel.EMAIL, emailService);
-        map.put(Channel.TELEGRAM, telegramService);
-        map.put(Channel.NOTIFICATION, notificationService);
-        return map;
+        messagingServiceMap.put(Channel.EMAIL, emailService);
+        messagingServiceMap.put(Channel.TELEGRAM, telegramService);
+        messagingServiceMap.put(Channel.NOTIFICATION, notificationService);
     }
+
+    public BaseMessagingService getServiceForRequest(Channel channel) {
+        return messagingServiceMap.get(channel);
+    }
+
 }

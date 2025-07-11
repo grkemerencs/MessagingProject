@@ -1,15 +1,15 @@
 package com.example.notificationproject.mapper;
 
 import com.example.notificationproject.dto.request.RegisterDeviceRequestDTO;
-import com.example.notificationproject.dto.respond.DeviceRequestDTO;
+import com.example.notificationproject.dto.respond.DeviceRespondDTO;
 import com.example.notificationproject.entity.Device;
 
 import java.util.function.Function;
 
 public class DeviceMapper {
 
-    public static final Function<Device, DeviceRequestDTO> toDTO = device -> {
-        DeviceRequestDTO dto = new DeviceRequestDTO();
+    public static final Function<Device, DeviceRespondDTO> toDTO = device -> {
+        DeviceRespondDTO dto = new DeviceRespondDTO();
         dto.setId(device.getId());
         dto.setOwnerName(device.getOwnerName());
         dto.setPlatform(device.getPlatform());

@@ -6,12 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
 @AllArgsConstructor
-@Setter
+@NoArgsConstructor
 @Getter
-public class RegisterTemplateRequestDTO {
-    private String name;
-    private String title_template;
-    private String body_template;
+@Setter
+public class RegisterEmailRequestDTO {
+    String emailAdress;
 }

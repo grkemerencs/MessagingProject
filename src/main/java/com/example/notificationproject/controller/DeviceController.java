@@ -1,9 +1,9 @@
 package com.example.notificationproject.controller;
 
 
-import com.example.notificationproject.dto.respond.DeviceRequestDTO;
+import com.example.notificationproject.dto.respond.DeviceRespondDTO;
 import com.example.notificationproject.dto.request.RegisterDeviceRequestDTO;
-import com.example.notificationproject.service.DeviceService;
+import com.example.notificationproject.service.database.DeviceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,28 +13,28 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("devices")
+@RequestMapping("device")
 public class DeviceController {
 
     private final DeviceService deviceService;
 
 
     @GetMapping
-    public ResponseEntity<List<DeviceRequestDTO>> getAllDevices() {
-        List<DeviceRequestDTO> devices = deviceService.getAllDevices();
+    public ResponseEntity<List<DeviceRespondDTO>> getAllDevices() {
+        List<DeviceRespondDTO> devices = deviceService.getAllDevices();
         return ResponseEntity.ok(devices);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<DeviceRequestDTO> registerDevice(@Valid @RequestBody RegisterDeviceRequestDTO registerDeviceRequestDTO){
-        DeviceRequestDTO deviceRequestDTO = deviceService.registerDevice(registerDeviceRequestDTO);
-        return ResponseEntity.ok(deviceRequestDTO);
+    public ResponseEntity<DeviceRespondDTO> registerDevice(@Valid @RequestBody RegisterDeviceRequestDTO registerDeviceRequestDTO){
+        DeviceRespondDTO deviceRespondDTO = deviceService.registerDevice(registerDeviceRequestDTO);
+        return ResponseEntity.ok(deviceRespondDTO);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DeviceRequestDTO> getDeviceWithId(@PathVariable int id) {
-        DeviceRequestDTO deviceRequestDTO = deviceService.getDeviceById(id);
-        return ResponseEntity.ok(deviceRequestDTO);
+    public ResponseEntity<DeviceRespondDTO> getDeviceWithId(@PathVariable String id) {
+        DeviceRespondDTO deviceRespondDTO = deviceService.getDeviceById(id);
+        return ResponseEntity.ok(deviceRespondDTO);
     }
 
 }

@@ -1,9 +1,9 @@
-package com.example.notificationproject.service;
+package com.example.notificationproject.service.messaging;
 
 import com.example.notificationproject.dto.request.NotificationRequestDTO;
 import com.example.notificationproject.entity.Device;
-import com.example.notificationproject.entity.Template;
-import com.example.notificationproject.util.NotificationConstructor;
+import com.example.notificationproject.service.database.DeviceService;
+import com.example.notificationproject.service.MessageConstructorService;
 import com.google.firebase.messaging.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,12 +14,11 @@ import java.util.*;
 @AllArgsConstructor
 public class FirebaseMessagingServiceService implements BaseMessagingService {
     public final DeviceService deviceService;
-    public final TemplateService templateService;
+    private final MessageConstructorService messageConstructorService;
 
     public String sendNotifications(NotificationRequestDTO notificationRequestDTO) {
-        Template template = templateService.getTemplateEntityById(notificationRequestDTO.getTemplateId());
         Map<String,String> parameters = notificationRequestDTO.getParameters();
-        Notification notification = NotificationConstructor.construct(template,parameters);
+        Notification notification = messageConstructorService.constructNotification(notificationRequestDTO);
         Set<String> tokens = new HashSet<>();
         tokens.addAll(notificationRequestDTO.getDeviceTokens());
         // takes tokens for each device if from database.
@@ -46,7 +45,7 @@ public class FirebaseMessagingServiceService implements BaseMessagingService {
         }
     }
 
-    public String sendNotificationsToAllDevices(NotificationRequestDTO notificationRequestDTO) {
+    public String sendNotificationsToAll(NotificationRequestDTO notificationRequestDTO) {
         List<String> tokens = deviceService.getAllDeviceEntities().stream().map(Device::getFireBaseToken).toList();
         notificationRequestDTO.setDeviceTokens(tokens);
         notificationRequestDTO.setDeviceIds(new ArrayList<>());

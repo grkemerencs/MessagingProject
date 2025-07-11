@@ -10,9 +10,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class DeviceRequestDTO {
+public class DeviceRespondDTO {
 
-    public int id;
+    public String id;
     public String ownerName;
     public DevicePlatform platform;
 

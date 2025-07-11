@@ -12,8 +12,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Setter
 @Getter
-public class TemplateRequestDTO {
-    private int id;
+public class TemplateRespondDTO {
+    private String id;
     private String name;
     private String title_template;
     private String body_template;

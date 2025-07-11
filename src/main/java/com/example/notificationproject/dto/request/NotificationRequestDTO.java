@@ -1,6 +1,7 @@
 package com.example.notificationproject.dto.request;
 
 import com.example.notificationproject.Enum.Channel;
+import com.example.notificationproject.entity.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,13 +19,15 @@ public class NotificationRequestDTO {
 
     private List<String> deviceTokens;
 
-    private List<Integer> deviceIds;
+    private List<String> deviceIds;
 
+    private List<String> emails;
+    private List<String> emailIds;
     @NotNull
     private Channel channel;
 
     @NotNull
-    private int templateId;
+    private String templateId;
 
     private Map<String, String> parameters;
 }

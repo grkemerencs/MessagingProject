@@ -22,7 +22,9 @@ public class FireBaseConfig {
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .build();
-            FirebaseApp.initializeApp(options);
+            if (FirebaseApp.getApps().isEmpty()) {
+                FirebaseApp.initializeApp(options);
+            }
             System.out.println("Firebase başlatıldı.");
         } catch (IOException e) {
             throw new RuntimeException("Firebase başlatılamadı", e);

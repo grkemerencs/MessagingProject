@@ -1,8 +1,8 @@
 package com.example.notificationproject.controller;
 
 import com.example.notificationproject.dto.request.RegisterTemplateRequestDTO;
-import com.example.notificationproject.dto.respond.TemplateRequestDTO;
-import com.example.notificationproject.service.TemplateService;
+import com.example.notificationproject.dto.respond.TemplateRespondDTO;
+import com.example.notificationproject.service.database.TemplateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,26 +20,21 @@ public class TemplateController {
     public final TemplateService templateService;
 
 
-
-
     @GetMapping
-    public ResponseEntity<List<TemplateRequestDTO>> getAllTemplates() {
-        List<TemplateRequestDTO> templateRequestDTOS = templateService.getAllTemplates();
-        return ResponseEntity.ok(templateRequestDTOS);
+    public ResponseEntity<List<TemplateRespondDTO>> getAllTemplates() {
+        List<TemplateRespondDTO> templateRespondDTOS = templateService.getAllTemplates();
+        return ResponseEntity.ok(templateRespondDTOS);
     }
-
-
 
     @PostMapping
-    public ResponseEntity<TemplateRequestDTO> createTemplate(@Valid @RequestBody RegisterTemplateRequestDTO request) {
-        TemplateRequestDTO templateRequestDTO = templateService.registerTemplate(request);
-        return ResponseEntity.ok(templateRequestDTO);
+    public ResponseEntity<TemplateRespondDTO> createTemplate(@Valid @RequestBody RegisterTemplateRequestDTO request) {
+        TemplateRespondDTO templateRespondDTO = templateService.registerTemplate(request);
+        return ResponseEntity.ok(templateRespondDTO);
     }
 
-
     @GetMapping("/{id}")
-    public ResponseEntity<TemplateRequestDTO> getTemplateById(@PathVariable int id) {
-        TemplateRequestDTO templateRequestDTO = templateService.getTemplateById(id);
-        return ResponseEntity.ok(templateRequestDTO);
+    public ResponseEntity<TemplateRespondDTO> getTemplateById(@PathVariable String id) {
+        TemplateRespondDTO templateRespondDTO = templateService.getTemplateById(id);
+        return ResponseEntity.ok(templateRespondDTO);
     }
 }
