@@ -23,11 +23,20 @@ public class NotificationRequestDTO {
 
     private List<String> emails;
     private List<String> emailIds;
+
+    private List<Long> telegramChatIds;
     @NotNull
     private Channel channel;
 
     @NotNull
-    private String templateId;
+    private String templateName;
 
     private Map<String, String> parameters;
+
+
+    // jackson request bodye alırken setterarı çağırıp obje oluşturuyor bu sayede normalize edebiliyorum.
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName != null ? templateName.toLowerCase() : null;
+    }
+
 }

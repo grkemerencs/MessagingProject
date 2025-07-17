@@ -32,6 +32,11 @@ public class TemplateService {
         return TemplateMapper.toDTO.apply(getTemplateEntityById(id));
     }
 
+    public final Template getTemplateEntityByName(String name) {
+        return repo.findTemplateByName(name).orElseThrow(()->new NotFoundException("Template not found with name: "+
+                name));
+    }
+
     public final TemplateRespondDTO registerTemplate(RegisterTemplateRequestDTO registerTemplateRequestDTO) {
         Template template = repo.save(TemplateMapper.toEntity.apply(registerTemplateRequestDTO));
         return TemplateMapper.toDTO.apply(template);

@@ -9,8 +9,10 @@ import com.example.notificationproject.entity.Device;
 import com.example.notificationproject.repository.DeviceRepository;
 import com.example.notificationproject.entity.Template;
 import com.example.notificationproject.repository.TemplateRepository;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@EnableScheduling
 public class NotificationProjectApplication {
 
     public static void main(String[] args) {

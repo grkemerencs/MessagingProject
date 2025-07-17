@@ -3,6 +3,8 @@ package com.example.notificationproject.service;
 import com.example.notificationproject.dto.request.NotificationRequestDTO;
 import com.example.notificationproject.entity.Template;
 import com.example.notificationproject.service.database.TemplateService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.text.StringSubstitutor;
@@ -15,7 +17,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MessageConstructorService {
-    public final TemplateService templateService;
+    private final TemplateService templateService;
+    private final ObjectMapper objectMapper;
     public Notification constructNotification(NotificationRequestDTO notificationRequestDTO) {
         List<String> content = getContent(notificationRequestDTO);
         String title = content.get(0);
@@ -36,9 +39,18 @@ public class MessageConstructorService {
         return message;
     }
 
+    public ObjectNode constructTelegramMessage(NotificationRequestDTO notificationRequestDTO) {
+        List<String> content = getContent(notificationRequestDTO);
+        ObjectNode jsonBody = objectMapper.createObjectNode();
+        jsonBody.put("chat_id", "0");
+        jsonBody.put("text", "<b>"+content.get(0)+"</b>\n"+content.get(1));
+        jsonBody.put("parse_mode", "HTML");
+        return jsonBody;
+    }
+
 
     private List<String> getContent(NotificationRequestDTO notificationRequestDTO) {
-        Template template = templateService.getTemplateEntityById(notificationRequestDTO.getTemplateId());
+        Template template = templateService.getTemplateEntityByName(notificationRequestDTO.getTemplateName());
         StringSubstitutor substitutor = new StringSubstitutor(notificationRequestDTO.getParameters());
         String title = substitutor.replace(template.getTitle_template());
         String body = substitutor.replace(template.getBody_template());
