@@ -1,30 +1,33 @@
 package com.example.notificationproject.service.messaging;
 
-import com.example.notificationproject.dto.request.NotificationRequestDTO;
-import com.example.notificationproject.entity.Device;
-import com.example.notificationproject.service.database.DeviceService;
+import com.example.notificationproject.Model.Aggregate.NotificationRequest;
+import com.example.notificationproject.Model.entity.UserDevice;
+import com.example.notificationproject.service.database.UserDeviceService;
 import com.example.notificationproject.service.MessageConstructorService;
 import com.google.firebase.messaging.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class FirebaseMessagingServiceService implements BaseMessagingService {
-    public final DeviceService deviceService;
+    public final UserDeviceService userDeviceService;
     private final MessageConstructorService messageConstructorService;
 
-    public String sendNotifications(NotificationRequestDTO notificationRequestDTO) {
-        Map<String,String> parameters = notificationRequestDTO.getParameters();
-        Notification notification = messageConstructorService.constructNotification(notificationRequestDTO);
+    public String sendNotifications(NotificationRequest notificationRequest) {
+        Map<String,String> parameters = notificationRequest.getParameters();
+        Notification notification = messageConstructorService.constructNotification(notificationRequest);
         Set<String> tokens = new HashSet<>();
-        tokens.addAll(notificationRequestDTO.getDeviceTokens());
+        tokens.addAll(notificationRequest.getDeviceTokens());
         // takes tokens for each device if from database.
-        List<Device> devicesToAddToTokens = deviceService.getDeviceEntityById(notificationRequestDTO.getDeviceIds());
-        tokens.addAll(devicesToAddToTokens.stream().map(Device::getFireBaseToken).toList());
+        List<UserDevice> devicesToAddToTokens = userDeviceService.getUserDeviceById(notificationRequest.getDeviceIds());
+        tokens.addAll(devicesToAddToTokens.stream().map(UserDevice::getFireBaseToken).toList());
         System.out.println("-----------tokens------------");
+        log.info("---token*---");
         tokens.stream().forEach(System.out::println);
 
         List<Message> messages = tokens.stream()
@@ -45,12 +48,12 @@ public class FirebaseMessagingServiceService implements BaseMessagingService {
         }
     }
 
-    public String sendNotificationsToAll(NotificationRequestDTO notificationRequestDTO) {
-        List<String> tokens = deviceService.getAllDeviceEntities().stream().map(Device::getFireBaseToken).toList();
-        notificationRequestDTO.setDeviceTokens(tokens);
-        notificationRequestDTO.setDeviceIds(new ArrayList<>());
+    public String sendNotificationsToAll(NotificationRequest notificationRequest) {
+        List<String> tokens = userDeviceService.getAllUserDevices().stream().map(UserDevice::getFireBaseToken).toList();
+        notificationRequest.setDeviceTokens(tokens);
+        notificationRequest.setDeviceIds(new ArrayList<>());
         System.out.println("asdasdasdsad");
-        return sendNotifications(notificationRequestDTO);
+        return sendNotifications(notificationRequest);
     }
 
 }

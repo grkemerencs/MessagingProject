@@ -1,11 +1,9 @@
 package com.example.notificationproject.service.messaging;
 
-import com.example.notificationproject.dto.request.NotificationRequestDTO;
-import com.example.notificationproject.entity.Telegram;
-import com.example.notificationproject.repository.TelegramRepository;
+import com.example.notificationproject.Model.Aggregate.NotificationRequest;
+import com.example.notificationproject.Model.entity.UserTelegramAccount;
 import com.example.notificationproject.service.MessageConstructorService;
-import com.example.notificationproject.service.database.TelegramService;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.example.notificationproject.service.database.UserTelegramAccountService;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +25,7 @@ public class TelegramMessagingService implements BaseMessagingService {
     @Value("${telegram.bot.api-url}")
     private String telegramApiUrl;
     private final ObjectMapper objectMapper;
-    private final TelegramService telegramService;
+    private final UserTelegramAccountService userTelegramAccountService;
     RestTemplate restTemplate = new RestTemplate();
     private final MessageConstructorService messageConstructorService;
 
@@ -38,13 +36,13 @@ public class TelegramMessagingService implements BaseMessagingService {
     }
 
     @Override
-    public String sendNotifications(NotificationRequestDTO notificationRequestDTO) {
+    public String sendNotifications(NotificationRequest notificationRequest) {
 
-        ObjectNode jsonBody = messageConstructorService.constructTelegramMessage(notificationRequestDTO);
+        ObjectNode jsonBody = messageConstructorService.constructTelegramMessage(notificationRequest);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         int failedMessageCount = 0;
-        for (long chatId : notificationRequestDTO.getTelegramChatIds()) {
+        for (long chatId : notificationRequest.getTelegramChatIds()) {
             jsonBody.put("chat_id", chatId);
             HttpEntity<ObjectNode> request = new HttpEntity<>(jsonBody, headers);
             try {
@@ -57,15 +55,15 @@ public class TelegramMessagingService implements BaseMessagingService {
                 System.err.println("Telegram mesaj gönderilirken hata: " + e.getMessage());
             }
         }
-        return "Başarılı mesaj sayısı: "+(notificationRequestDTO.getTelegramChatIds().size()-failedMessageCount)+
+        return "Başarılı mesaj sayısı: "+(notificationRequest.getTelegramChatIds().size()-failedMessageCount)+
                 "\nBaşarısız mesaj sayısı: "+failedMessageCount;
     }
 
     @Override
-    public String sendNotificationsToAll(NotificationRequestDTO notificationRequestDTO) {
-        List<Telegram> telegrams = telegramService.getAllTelegrams();
-        List<Long> telegramChatIds = telegrams.stream().map(Telegram::getTelegramId).toList();
-        notificationRequestDTO.setTelegramChatIds(telegramChatIds);
-        return sendNotifications(notificationRequestDTO);
+    public String sendNotificationsToAll(NotificationRequest notificationRequest) {
+        List<UserTelegramAccount> userTelegramAccounts = userTelegramAccountService.getAllUserTelegramAccounts();
+        List<Long> telegramChatIds = userTelegramAccounts.stream().map(UserTelegramAccount::getTelegramId).toList();
+        notificationRequest.setTelegramChatIds(telegramChatIds);
+        return sendNotifications(notificationRequest);
     }
 }

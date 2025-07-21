@@ -1,18 +1,15 @@
 package com.example.notificationproject.service;
 
-import com.example.notificationproject.dto.request.NotificationRequestDTO;
-import com.example.notificationproject.entity.Template;
-import com.example.notificationproject.service.database.TemplateService;
+import com.example.notificationproject.Model.dto.request.NotificationRequestDTO;
+import com.example.notificationproject.Model.entity.MessageTemplate;
+import com.example.notificationproject.service.database.MessageTemplateService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.firebase.messaging.Notification;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mail.SimpleMailMessage;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +23,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 class MessageConstructorServiceTest {
 
     @Mock
-    private TemplateService templateService;
+    private MessageTemplateService messageTemplateService;
 
     private ObjectMapper objectMapper;
 
@@ -42,11 +39,11 @@ class MessageConstructorServiceTest {
                 "name", "Görkem",
                 "site", "Hacetteepe"
         )));
-        Template template = new Template();
-        template.setTitle_template("merhaba ${name},");
-        template.setBody_template("${site}'e en yakın zamanda bekleniyorsunuz");
+        MessageTemplate messageTemplate = new MessageTemplate();
+        messageTemplate.setTitle_template("merhaba ${name},");
+        messageTemplate.setBody_template("${site}'e en yakın zamanda bekleniyorsunuz");
 
-        Mockito.when(templateService.getTemplateEntityByName(anyString())).thenReturn(template);
+        Mockito.when(messageTemplateService.getTemplateEntityByName(anyString())).thenReturn(messageTemplate);
         List<String> actualAnswers = new ArrayList<>(List.of("merhaba Görkem,",
                 "Hacetteepe'e en yakın zamanda bekleniyorsunuz"));
         List<String> methodAnswers = messageConstructorService.getContent(notificationRequestDTO);

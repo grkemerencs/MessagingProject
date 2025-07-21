@@ -1,6 +1,6 @@
 package com.example.notificationproject.aspect;
 
-import com.example.notificationproject.entity.Log;
+import com.example.notificationproject.Model.entity.Log;
 import com.example.notificationproject.service.LogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -23,7 +23,7 @@ public class LoggingAspect {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Around("@within(org.springframework.web.bind.annotation.RestController)")
+    @Around("within(com.example.notificationproject.controller.NotificationController)")
     public Object logRequestAndResponse(ProceedingJoinPoint joinPoint) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String ip = request.getRemoteAddr();

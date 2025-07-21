@@ -1,8 +1,8 @@
 package com.example.notificationproject.service;
 
-import com.example.notificationproject.dto.request.NotificationRequestDTO;
-import com.example.notificationproject.entity.Template;
-import com.example.notificationproject.service.database.TemplateService;
+import com.example.notificationproject.Model.Aggregate.NotificationRequest;
+import com.example.notificationproject.Model.entity.MessageTemplate;
+import com.example.notificationproject.service.database.MessageTemplateService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.firebase.messaging.Notification;
@@ -17,10 +17,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MessageConstructorService {
-    private final TemplateService templateService;
+    private final MessageTemplateService messageTemplateService;
     private final ObjectMapper objectMapper;
-    public Notification constructNotification(NotificationRequestDTO notificationRequestDTO) {
-        List<String> content = getContent(notificationRequestDTO);
+    public Notification constructNotification(NotificationRequest notificationRequest) {
+        List<String> content = getContent(notificationRequest);
         String title = content.get(0);
         String body = content.get(1);
         return Notification.builder()
@@ -29,8 +29,8 @@ public class MessageConstructorService {
                 .build();
     }
 
-    public SimpleMailMessage constructSimpleMailMessage(NotificationRequestDTO notificationRequestDTO) {
-        List<String> content = getContent(notificationRequestDTO);
+    public SimpleMailMessage constructSimpleMailMessage(NotificationRequest notificationRequest) {
+        List<String> content = getContent(notificationRequest);
         String title = content.get(0);
         String body = content.get(1);
         SimpleMailMessage message = new SimpleMailMessage();
@@ -39,8 +39,8 @@ public class MessageConstructorService {
         return message;
     }
 
-    public ObjectNode constructTelegramMessage(NotificationRequestDTO notificationRequestDTO) {
-        List<String> content = getContent(notificationRequestDTO);
+    public ObjectNode constructTelegramMessage(NotificationRequest notificationRequest) {
+        List<String> content = getContent(notificationRequest);
         ObjectNode jsonBody = objectMapper.createObjectNode();
         jsonBody.put("chat_id", "0");
         jsonBody.put("text", "<b>"+content.get(0)+"</b>\n"+content.get(1));
@@ -49,11 +49,11 @@ public class MessageConstructorService {
     }
 
 
-    public List<String> getContent(NotificationRequestDTO notificationRequestDTO) {
-        Template template = templateService.getTemplateEntityByName(notificationRequestDTO.getTemplateName());
-        StringSubstitutor substitutor = new StringSubstitutor(notificationRequestDTO.getParameters());
-        String title = substitutor.replace(template.getTitle_template());
-        String body = substitutor.replace(template.getBody_template());
+    public List<String> getContent(NotificationRequest notificationRequest) {
+        MessageTemplate messageTemplate = messageTemplateService.getTemplateEntityByName(notificationRequest.getTemplateName());
+        StringSubstitutor substitutor = new StringSubstitutor(notificationRequest.getParameters());
+        String title = substitutor.replace(messageTemplate.getTitle_template());
+        String body = substitutor.replace(messageTemplate.getBody_template());
         List<String> content = new ArrayList<>();
         content.add(title);
         content.add(body);

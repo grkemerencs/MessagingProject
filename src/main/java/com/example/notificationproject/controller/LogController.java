@@ -1,6 +1,6 @@
 package com.example.notificationproject.controller;
 
-import com.example.notificationproject.entity.Log;
+import com.example.notificationproject.Model.entity.Log;
 import com.example.notificationproject.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,12 +17,12 @@ public class LogController {
     private LogService logService;
 
     @GetMapping("/last/{count}")
-    public List<Log> getLastNLogs(@PathVariable int count) {
-        return logService.getLastNLogs(count);
+    public List<Log> getLastNLogEntities(@PathVariable int count) {
+        return logService.getLastNLogEntities(count);
     }
 
     @GetMapping("/all")
-    public List<Log> getAllLogs() {
-        return logService.getAllLogs();
+    public List<Log> getAllLogEntities() {
+        return logService.getAllLogEntities();
     }
 } 

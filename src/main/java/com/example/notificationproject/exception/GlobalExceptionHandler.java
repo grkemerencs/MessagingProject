@@ -19,4 +19,16 @@ public class GlobalExceptionHandler {
                         "\nChannel:"+ Arrays.toString(Channel.values()) +
                         "\nDevice: "+ Arrays.toString(DevicePlatform.values()));
     }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiErrorResponseDTO> handleNotFoundException {
+
+    }
+
+    public class ApiErrorResponseDTO {
+        public Boolean success;
+        public String failureMessage;
+
+        public int responseCode;
+    }
 } 

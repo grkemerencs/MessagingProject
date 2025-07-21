@@ -1,16 +1,14 @@
 package com.example.notificationproject.service.messaging;
 
-import com.example.notificationproject.dto.request.NotificationRequestDTO;
-import com.example.notificationproject.entity.Email;
-import com.example.notificationproject.service.database.DeviceService;
-import com.example.notificationproject.service.database.EmailService;
+import com.example.notificationproject.Model.Aggregate.NotificationRequest;
+import com.example.notificationproject.Model.entity.EmailAdress;
+import com.example.notificationproject.service.database.EmailAdressService;
 import com.example.notificationproject.service.MessageConstructorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,20 +17,20 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class EmailMessagingService implements BaseMessagingService {
 
-    public final EmailService emailService;
+    public final EmailAdressService emailAdressService;
     private final JavaMailSender javaMailSender;
     private final MessageConstructorService messageConstructorService;
 
     @Override
-    public String sendNotifications(NotificationRequestDTO notificationRequestDTO) {
+    public String sendNotifications(NotificationRequest notificationRequest) {
         Set<String> allEmails = new HashSet<>();
-        allEmails.addAll(notificationRequestDTO.getEmails());
-        List<String> emailRequestsByIds = notificationRequestDTO.getEmailIds();
-        allEmails.addAll(emailService
-                        .getEmailEntityById(
-                        notificationRequestDTO.getEmailIds()).stream().map(Email::getEmailAdress).toList()
+        allEmails.addAll(notificationRequest.getEmails());
+        List<String> emailRequestsByIds = notificationRequest.getEmailIds();
+        allEmails.addAll(emailAdressService
+                        .getEmailAdressById(
+                        notificationRequest.getEmailIds()).stream().map(EmailAdress::getEmailAdress).toList()
                         );
-        SimpleMailMessage message = messageConstructorService.constructSimpleMailMessage(notificationRequestDTO);
+        SimpleMailMessage message = messageConstructorService.constructSimpleMailMessage(notificationRequest);
         int failedEmailMessages = 0;
         for (String to : allEmails) {
             try {
@@ -47,10 +45,10 @@ public class EmailMessagingService implements BaseMessagingService {
     }
 
     @Override
-    public String sendNotificationsToAll(NotificationRequestDTO notificationRequestDTO) {
-        List<Email> emails = emailService.getAllEmailEntities();
-        List<String> emailsAsString = emails.stream().map(Email::getEmailAdress).toList();
-        notificationRequestDTO.setEmails(emailsAsString);
-        return sendNotifications(notificationRequestDTO);
+    public String sendNotificationsToAll(NotificationRequest notificationRequest) {
+        List<EmailAdress> emails = emailAdressService.getAllEmailAdresses();
+        List<String> emailsAsString = emails.stream().map(EmailAdress::getEmailAdress).toList();
+        notificationRequest.setEmails(emailsAsString);
+        return sendNotifications(notificationRequest);
     }
 }

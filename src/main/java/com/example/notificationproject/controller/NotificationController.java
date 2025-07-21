@@ -1,9 +1,9 @@
 package com.example.notificationproject.controller;
 
 
-import com.example.notificationproject.Enum.Channel;
-import com.example.notificationproject.config.MessagingServiceConfig;
-import com.example.notificationproject.dto.request.NotificationRequestDTO;
+import com.example.notificationproject.mapper.NotificationRequestMapper;
+import com.example.notificationproject.service.messaging.MessagingStrategyService;
+import com.example.notificationproject.Model.dto.request.NotificationRequestDTO;
 import com.example.notificationproject.service.messaging.BaseMessagingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,33 +13,32 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("notification")
 public class NotificationController {
-    private final MessagingServiceConfig messagingServiceConfig;
+    private final MessagingStrategyService messagingStrategyService;
 
     @PostMapping("/send")
     public ResponseEntity<String> sendNotificationToSingleDevice(
             @Valid @RequestBody NotificationRequestDTO notificationRequestDTO) {
-        BaseMessagingService service = messagingServiceConfig.getServiceForRequest(notificationRequestDTO.getChannel());
-        return sendNotificationToMultipleDevices(notificationRequestDTO);
+        BaseMessagingService service = messagingStrategyService.getServiceForRequest(notificationRequestDTO.getChannel());
+        String response = service.sendNotifications(NotificationRequestMapper.toDomain.apply(notificationRequestDTO));
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/send/batch")
     public ResponseEntity<String> sendNotificationToMultipleDevices(
             @Valid @RequestBody NotificationRequestDTO notificationRequestDTO) {
-        BaseMessagingService service = messagingServiceConfig.getServiceForRequest(notificationRequestDTO.getChannel());
-        String response = service.sendNotifications(notificationRequestDTO);
+        BaseMessagingService service = messagingStrategyService.getServiceForRequest(notificationRequestDTO.getChannel());
+        String response = service.sendNotifications(NotificationRequestMapper.toDomain.apply(notificationRequestDTO));
         return ResponseEntity.ok(response);
     }
     @PostMapping("send/all")
     public ResponseEntity<String> sendNotificationToAllDevices(
             @Valid @RequestBody NotificationRequestDTO notificationRequestDTO) {
-        BaseMessagingService service = messagingServiceConfig.getServiceForRequest(notificationRequestDTO.getChannel());
-        String response = service.sendNotificationsToAll(notificationRequestDTO);
+        BaseMessagingService service = messagingStrategyService.getServiceForRequest(notificationRequestDTO.getChannel());
+        String response = service.sendNotificationsToAll(NotificationRequestMapper.toDomain.apply(notificationRequestDTO));
         return ResponseEntity.ok(response);
     }
 }

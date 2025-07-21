@@ -1,6 +1,6 @@
 package com.example.notificationproject.service;
 
-import com.example.notificationproject.entity.Log;
+import com.example.notificationproject.Model.entity.Log;
 import com.example.notificationproject.repository.LogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -20,11 +20,11 @@ public class LogService {
         logRepository.save(log);
     }
 
-    public List<Log> getLastNLogs(int n) {
+    public List<Log> getLastNLogEntities(int n) {
         return logRepository.findAll(PageRequest.of(0, n, Sort.by(Sort.Direction.DESC, "timestamp"))).getContent();
     }
 
-    public List<Log> getAllLogs() {
-        return logRepository.findAll(Sort.by(Sort.Direction.DESC, "timestamp"));
+    public List<Log> getAllLogEntities() {
+        return logRepository.findAll();
     }
 } 

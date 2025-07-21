@@ -1,6 +1,6 @@
 package com.example.notificationproject.util;
 
-import com.example.notificationproject.entity.Template;
+import com.example.notificationproject.Model.entity.MessageTemplate;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
 
 public class TemplateParameterExtractor {
     private static final Pattern PARAM_PATTERN = Pattern.compile("\\$\\{([^}]+)}");
-    public static Set<String> extract(Template template){
+    public static Set<String> extract(MessageTemplate messageTemplate){
         List<String> parameters = new ArrayList<>();
-        Matcher matcher = PARAM_PATTERN.matcher(template.getBody_template().concat(template.getTitle_template()));
+        Matcher matcher = PARAM_PATTERN.matcher(messageTemplate.getBody_template().concat(messageTemplate.getTitle_template()));
         Set<String> result = new HashSet<>();
         while (matcher.find()) {
             result.add(matcher.group(1));
