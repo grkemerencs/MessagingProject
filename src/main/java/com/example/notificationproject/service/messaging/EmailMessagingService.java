@@ -30,10 +30,8 @@ public class EmailMessagingService implements BaseMessagingService {
         List<String> emailRequestsByIds = notificationRequestDTO.getEmailIds();
         allEmails.addAll(emailService
                         .getEmailEntityById(
-                        notificationRequestDTO.getDeviceIds()).stream().map(Email::getEmailAdress).toList()
+                        notificationRequestDTO.getEmailIds()).stream().map(Email::getEmailAdress).toList()
                         );
-        System.out.println(notificationRequestDTO.getEmailIds());
-        System.out.println(Arrays.toString(allEmails.toArray()));
         SimpleMailMessage message = messageConstructorService.constructSimpleMailMessage(notificationRequestDTO);
         int failedEmailMessages = 0;
         for (String to : allEmails) {
@@ -45,7 +43,7 @@ public class EmailMessagingService implements BaseMessagingService {
                 failedEmailMessages++;
             }
         }
-        return (allEmails.size()-failedEmailMessages)+"Başarılı, "+failedEmailMessages+" Başarısız Email Gönderildi";
+        return (allEmails.size()-failedEmailMessages)+" Başarılı --- , "+failedEmailMessages+" Başarısız Email Gönderildi";
     }
 
     @Override

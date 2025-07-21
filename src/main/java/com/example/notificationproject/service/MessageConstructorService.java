@@ -49,7 +49,7 @@ public class MessageConstructorService {
     }
 
 
-    private List<String> getContent(NotificationRequestDTO notificationRequestDTO) {
+    public List<String> getContent(NotificationRequestDTO notificationRequestDTO) {
         Template template = templateService.getTemplateEntityByName(notificationRequestDTO.getTemplateName());
         StringSubstitutor substitutor = new StringSubstitutor(notificationRequestDTO.getParameters());
         String title = substitutor.replace(template.getTitle_template());

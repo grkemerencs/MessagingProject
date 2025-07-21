@@ -28,5 +28,4 @@ public class TemplateMapper {
         entity.setBody_template(register.getBody_template());
         return entity;
     });
-
 }
