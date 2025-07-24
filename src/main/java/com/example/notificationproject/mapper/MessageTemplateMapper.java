@@ -14,8 +14,6 @@ import java.util.function.Function;
 @Mapper()
 public interface MessageTemplateMapper {
 
-
-
     @Mapping(target = "parameters", expression = "java(com.example.notificationproject.util.TemplateParameterExtractor.extract(messageTemplate))")
     MessageTemplateRespondDTO toDTO(MessageTemplate messageTemplate);
     MessageTemplate toEntity(MessageTemplateRegisterRequestDTO messageTemplateRegisterRequestDTO);
