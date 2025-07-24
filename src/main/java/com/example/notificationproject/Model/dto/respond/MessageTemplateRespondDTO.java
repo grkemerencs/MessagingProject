@@ -17,5 +17,5 @@ public class MessageTemplateRespondDTO {
     private String name;
     private String title_template;
     private String body_template;
-    private Set<String> paramaters;
+    private Set<String> parameters;
 }

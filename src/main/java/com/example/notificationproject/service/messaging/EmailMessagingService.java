@@ -1,23 +1,21 @@
 package com.example.notificationproject.service.messaging;
 
 import com.example.notificationproject.Model.Aggregate.NotificationRequest;
-import com.example.notificationproject.Model.entity.EmailAdress;
-import com.example.notificationproject.service.database.EmailAdressService;
+import com.example.notificationproject.Model.entity.EmailAddress;
+import com.example.notificationproject.service.database.EmailAddressService;
 import com.example.notificationproject.service.MessageConstructorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class EmailMessagingService implements BaseMessagingService {
 
-    public final EmailAdressService emailAdressService;
+    public final EmailAddressService emailAddressService;
     private final JavaMailSender javaMailSender;
     private final MessageConstructorService messageConstructorService;
 
@@ -26,28 +24,30 @@ public class EmailMessagingService implements BaseMessagingService {
         Set<String> allEmails = new HashSet<>();
         allEmails.addAll(notificationRequest.getEmails());
         List<String> emailRequestsByIds = notificationRequest.getEmailIds();
-        allEmails.addAll(emailAdressService
-                        .getEmailAdressById(
-                        notificationRequest.getEmailIds()).stream().map(EmailAdress::getEmailAdress).toList()
+        allEmails.addAll(emailAddressService
+                        .getEmailAddressById(
+                        notificationRequest.getEmailIds()).stream().map(EmailAddress::getEmailAddress).toList()
                         );
         SimpleMailMessage message = messageConstructorService.constructSimpleMailMessage(notificationRequest);
-        int failedEmailMessages = 0;
+        List<String> failedEmailMessages = new ArrayList<>();
+        List<String> successfulEmailMessages = new ArrayList<>();
         for (String to : allEmails) {
             try {
                 message.setTo(to);
                 javaMailSender.send(message);
+                successfulEmailMessages.add(to);
             } catch (Exception e) {
-                System.err.println("Mail gönderilemedi: " + to + " Hata: " + e.getMessage());
-                failedEmailMessages++;
+                failedEmailMessages.add(to);
             }
         }
-        return (allEmails.size()-failedEmailMessages)+" Başarılı --- , "+failedEmailMessages+" Başarısız Email Gönderildi";
+        return "Message successfully delivered To: "+ Arrays.toString(successfulEmailMessages.toArray())+
+                "------Message failed to: "+Arrays.toString(failedEmailMessages.toArray());
     }
 
     @Override
     public String sendNotificationsToAll(NotificationRequest notificationRequest) {
-        List<EmailAdress> emails = emailAdressService.getAllEmailAdresses();
-        List<String> emailsAsString = emails.stream().map(EmailAdress::getEmailAdress).toList();
+        List<EmailAddress> emails = emailAddressService.getAllEmailAddresses();
+        List<String> emailsAsString = emails.stream().map(EmailAddress::getEmailAddress).toList();
         notificationRequest.setEmails(emailsAsString);
         return sendNotifications(notificationRequest);
     }

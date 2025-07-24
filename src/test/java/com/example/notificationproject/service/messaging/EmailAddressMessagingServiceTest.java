@@ -1,9 +1,9 @@
 package com.example.notificationproject.service.messaging;
 
 import com.example.notificationproject.Model.Aggregate.NotificationRequest;
-import com.example.notificationproject.Model.entity.EmailAdress;
+import com.example.notificationproject.Model.entity.EmailAddress;
 import com.example.notificationproject.service.MessageConstructorService;
-import com.example.notificationproject.service.database.EmailAdressService;
+import com.example.notificationproject.service.database.EmailAddressService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,9 +20,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class EmailAdressMessagingServiceTest {
+class EmailAddressMessagingServiceTest {
     @Mock
-    private EmailAdressService emailAdressService;
+    private EmailAddressService emailAddressService;
     @Mock
     private JavaMailSender javaMailSender;
     @Mock
@@ -38,15 +38,15 @@ class EmailAdressMessagingServiceTest {
         dto.setEmails(List.of("test1@gmail.com"));
         dto.setEmailIds(List.of());
 
-        List<EmailAdress> idList = new ArrayList<>(List.of(
-                new EmailAdress("123","test2@adasf.com"),
-                new EmailAdress("145","test1@gmail.com"))); // aynı emailden 2 tane almıcak
+        List<EmailAddress> idList = new ArrayList<>(List.of(
+                new EmailAddress("123","test2@adasf.com"),
+                new EmailAddress("145","test1@gmail.com"))); // aynı emailden 2 tane almıcak
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setText("merhabalar");
         message.setTo("");
         when(messageConstructorService.constructSimpleMailMessage(any())).thenReturn(message);
-        when(emailAdressService.getEmailEntityById(anyList())).thenReturn(idList);
+        when(emailAddressService.getEmailAddressById(anyList())).thenReturn(idList);
         doNothing().when(javaMailSender).send(any(SimpleMailMessage.class)); // hiçbirşey yapmasın başarılı*
 
         // Act
@@ -63,15 +63,15 @@ class EmailAdressMessagingServiceTest {
         dto.setEmails(List.of("test1@gmail.com")); // önemi yok
         dto.setEmailIds(List.of());
 
-        List<EmailAdress> idList = new ArrayList<>(List.of(
-                new EmailAdress("123","test2@adasf.com"),
-                new EmailAdress("145","test3@gmail.com"))); // 3 farklı mail 2 si databaseden geliyor
+        List<EmailAddress> idList = new ArrayList<>(List.of(
+                new EmailAddress("123","test2@adasf.com"),
+                new EmailAddress("145","test3@gmail.com"))); // 3 farklı mail 2 si databaseden geliyor
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setText("merhabalar");
         message.setTo("");
         when(messageConstructorService.constructSimpleMailMessage(any())).thenReturn(message);
-        when(emailAdressService.getEmailEntityById(anyList())).thenReturn(idList);
+        when(emailAddressService.getEmailAddressById(anyList())).thenReturn(idList);
         doNothing().when(javaMailSender).send(any(SimpleMailMessage.class)); // hiçbirşey yapmasın başarılı*
 
         // Act

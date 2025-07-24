@@ -2,6 +2,7 @@ package com.example.notificationproject.service.database;
 
 
 import com.example.notificationproject.Model.entity.UserTelegramAccount;
+import com.example.notificationproject.exception.DataBaseException;
 import com.example.notificationproject.exception.NotFoundException;
 import com.example.notificationproject.repository.UserTelegramAccountRepository;
 import lombok.AllArgsConstructor;
@@ -24,15 +25,25 @@ public class UserTelegramAccountService {
     }
 
     public final UserTelegramAccount getUserTelegramAccountById(String id) {
-        return repo.findById(id).orElseThrow(() -> new NotFoundException("UserTelegramAccount not found with id: " + id));
+        return repo.findById(id).orElseThrow(() -> new NotFoundException.UserTelegramAccountNotFound(id));
     }
 
     public final UserTelegramAccount registerUserTelegramAccount(UserTelegramAccount userTelegramAccount) {
-        userTelegramAccount.setName(userTelegramAccount.getName().toLowerCase());
-        return repo.save(userTelegramAccount);
+        try {
+            userTelegramAccount.setName(userTelegramAccount.getName().toLowerCase());
+            return repo.save(userTelegramAccount);
+        } catch (Exception e) {
+            throw new DataBaseException("Error in registerUserTelegramAccount");
+        }
     }
 
     public boolean isChatIdExist(Long chatId) {
         return repo.existsByTelegramId(chatId);
+    }
+
+    public UserTelegramAccount deleteUserTelegramAccountByTelegramId(String telegramId) {
+        UserTelegramAccount userTelegramAccount = getUserTelegramAccountById(telegramId);
+        repo.deleteById(telegramId);
+        return userTelegramAccount;
     }
 }

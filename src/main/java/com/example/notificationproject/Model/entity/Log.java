@@ -1,5 +1,6 @@
 package com.example.notificationproject.Model.entity;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,14 @@ public class Log {
         this.uri = uri;
         this.method = method;
         this.timestamp = timestamp;
+        this.response = response;
+    }
+
+    public Log(HttpServletRequest request, String response) {
+        this.ip = request.getRemoteAddr();
+        this.uri = request.getRequestURI();
+        this.method = request.getMethod();
+        this.timestamp = LocalDateTime.now();
         this.response = response;
     }
 } 

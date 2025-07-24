@@ -1,10 +1,11 @@
 package com.example.notificationproject.controller;
 
 
-import com.example.notificationproject.Model.dto.request.RegisterEmailAdressRequestDTO;
-import com.example.notificationproject.Model.entity.EmailAdress;
-import com.example.notificationproject.service.database.EmailAdressService;
-import com.mongodb.MongoWriteException;
+import com.example.notificationproject.Model.dto.request.EmailAddressRegisterRequestDTO;
+import com.example.notificationproject.Model.dto.respond.ApiRespondDTO;
+import com.example.notificationproject.Model.entity.EmailAddress;
+import com.example.notificationproject.exception.MongoDuplicateIndexException;
+import com.example.notificationproject.service.database.EmailAddressService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,36 +16,37 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("email")
-public class EmailController {
+public class EmailAdressController {
 
-    private final EmailAdressService emailAdressService;
+    private final EmailAddressService emailAddressService;
 
 
     @GetMapping
-    public ResponseEntity<List<EmailAdress>> getAllEmailAdresses() {
-        List<EmailAdress> emailAdresses = emailAdressService.getAllEmailAdresses();
-        return ResponseEntity.ok(emailAdresses);
+    public ResponseEntity<ApiRespondDTO<List<EmailAddress>>> getAllEmailAdresses() {
+        List<EmailAddress> emailAddresses = emailAddressService.getAllEmailAddresses();
+        return ResponseEntity.ok(new ApiRespondDTO<>(emailAddresses));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerEmail(@Valid @RequestBody RegisterEmailAdressRequestDTO emailRegisterRequest){
+    public ResponseEntity<ApiRespondDTO<EmailAddress>> registerEmail(@Valid @RequestBody EmailAddressRegisterRequestDTO emailRegisterRequest){
         try {
-            EmailAdress emailAdress = emailAdressService.registerEmail(emailRegisterRequest);
-            return ResponseEntity.ok(emailAdress);
-        } catch (MongoWriteException ex) {
-            return ResponseEntity.badRequest().body("MongoDB write error: " + ex.getError().getMessage());
+            EmailAddress emailAddress = emailAddressService.registerEmail(emailRegisterRequest);
+            return ResponseEntity.ok(new ApiRespondDTO<>(emailAddress));
+        } catch (Exception ex) {
+            throw new MongoDuplicateIndexException("The Email "+emailRegisterRequest.getEmailAddress()+ "is already exist");
         }
-    }
-    // register yaparken aynı e mailden bir tane daha varsa duplicate excep atıyor.
-    @ExceptionHandler(MongoWriteException.class)
-    public ResponseEntity<String> handleMongoWriteException(MongoWriteException ex) {
-        return ResponseEntity.badRequest().body("MongoDB write error: " + ex.getError().getMessage());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmailAdress> getEmailAdressWithId(@PathVariable String id) {
-        EmailAdress emailAdress = emailAdressService.getEmailAdressById(id);
-        return ResponseEntity.ok(emailAdress);
+    public ResponseEntity<ApiRespondDTO<EmailAddress>> getEmailAddressWithId(@PathVariable String id) {
+        EmailAddress emailAddress = emailAddressService.getEmailAddressById(id);
+        return ResponseEntity.ok(new ApiRespondDTO<>(emailAddress));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiRespondDTO<EmailAddress>> deleteEmailAddress(@PathVariable String id) {
+        EmailAddress emailAddress = emailAddressService.deleteEmailAddressById(id);
+        return ResponseEntity.ok(new ApiRespondDTO<>(emailAddress));
     }
 
 }

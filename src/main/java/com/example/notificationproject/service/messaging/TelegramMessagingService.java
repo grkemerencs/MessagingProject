@@ -4,6 +4,7 @@ import com.example.notificationproject.Model.Aggregate.NotificationRequest;
 import com.example.notificationproject.Model.entity.UserTelegramAccount;
 import com.example.notificationproject.service.MessageConstructorService;
 import com.example.notificationproject.service.database.UserTelegramAccountService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,8 +17,11 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TelegramMessagingService implements BaseMessagingService {
@@ -32,7 +36,7 @@ public class TelegramMessagingService implements BaseMessagingService {
     @PostConstruct
     public void init() {
         telegramApiUrl += "/sendMessage";
-        System.out.println("TelegramMessagingService başlatıldı. API URL: " + telegramApiUrl);
+        log.info("TelegramMessagingService is Started. API URL: {}", telegramApiUrl);
     }
 
     @Override
@@ -41,22 +45,21 @@ public class TelegramMessagingService implements BaseMessagingService {
         ObjectNode jsonBody = messageConstructorService.constructTelegramMessage(notificationRequest);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        int failedMessageCount = 0;
+        List<Long> successfulIds = new ArrayList<>();
+        List<Long> failedIds = new ArrayList<>();
         for (long chatId : notificationRequest.getTelegramChatIds()) {
             jsonBody.put("chat_id", chatId);
             HttpEntity<ObjectNode> request = new HttpEntity<>(jsonBody, headers);
             try {
                 ResponseEntity<String> response = restTemplate.postForEntity(telegramApiUrl, request, String.class);
-                if (!response.getStatusCode().is2xxSuccessful()) {
-                    System.err.println("Telegram mesaj gönderim hatası: " + response.getBody());
-                    failedMessageCount++;
-                }
+                successfulIds.add(chatId);
             } catch (Exception e) {
-                System.err.println("Telegram mesaj gönderilirken hata: " + e.getMessage());
+                log.info("An Exception occurred while sending telegram Message : {}", e.toString());
+                failedIds.add(chatId);
             }
         }
-        return "Başarılı mesaj sayısı: "+(notificationRequest.getTelegramChatIds().size()-failedMessageCount)+
-                "\nBaşarısız mesaj sayısı: "+failedMessageCount;
+        return "Message successfully delivered To: "+ Arrays.toString(successfulIds.toArray())+
+                "------Message failed to: "+Arrays.toString(failedIds.toArray());
     }
 
     @Override

@@ -16,10 +16,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class UserTelegramAccount {
 
     @Id
-
     private String id;
 
     private String name;
     @Indexed(unique = true)
     private long telegramId;
+
+
+    @Override
+    public String toString() {
+        return name+":"+telegramId;
+    }
 }

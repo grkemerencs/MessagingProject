@@ -1,28 +1,35 @@
 package com.example.notificationproject.controller;
 
 import com.example.notificationproject.Model.entity.Log;
-import com.example.notificationproject.service.LogService;
+import com.example.notificationproject.Model.dto.respond.ApiRespondDTO;
+import com.example.notificationproject.service.database.LogService;
+import com.google.protobuf.Api;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/logs")
 public class LogController {
     @Autowired
     private LogService logService;
 
-    @GetMapping("/last/{count}")
-    public List<Log> getLastNLogEntities(@PathVariable int count) {
-        return logService.getLastNLogEntities(count);
+    @GetMapping("/{count}")
+    public ResponseEntity<ApiRespondDTO<List<Log>>> getLastNLogEntities(@PathVariable int count) {
+        return ResponseEntity.ok(new ApiRespondDTO<>(logService.getLastNLogEntities(count)));
     }
 
     @GetMapping("/all")
-    public List<Log> getAllLogEntities() {
-        return logService.getAllLogEntities();
+    public ResponseEntity<ApiRespondDTO<List<Log>>> getAllLogEntities() {
+        return ResponseEntity.ok(new ApiRespondDTO<>(logService.getAllLogEntities()));
+    }
+
+    @DeleteMapping("/all")
+    public ResponseEntity<ApiRespondDTO<String>> clearAllLogEntities(){
+        return ResponseEntity.ok(new ApiRespondDTO<String>(logService.clearAllLogs()));
     }
 } 

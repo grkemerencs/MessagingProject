@@ -1,6 +1,8 @@
 package com.example.notificationproject.util;
 
 import com.example.notificationproject.Model.entity.MessageTemplate;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,6 +11,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TemplateParameterExtractor {
     private static final Pattern PARAM_PATTERN = Pattern.compile("\\$\\{([^}]+)}");
     public static Set<String> extract(MessageTemplate messageTemplate){

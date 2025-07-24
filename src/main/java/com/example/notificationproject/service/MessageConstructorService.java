@@ -50,7 +50,7 @@ public class MessageConstructorService {
 
 
     public List<String> getContent(NotificationRequest notificationRequest) {
-        MessageTemplate messageTemplate = messageTemplateService.getTemplateEntityByName(notificationRequest.getTemplateName());
+        MessageTemplate messageTemplate = messageTemplateService.getMessageTemplateByName(notificationRequest.getTemplateName());
         StringSubstitutor substitutor = new StringSubstitutor(notificationRequest.getParameters());
         String title = substitutor.replace(messageTemplate.getTitle_template());
         String body = substitutor.replace(messageTemplate.getBody_template());

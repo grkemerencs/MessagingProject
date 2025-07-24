@@ -1,10 +1,6 @@
 package com.example.notificationproject.service.messaging;
 
 import com.example.notificationproject.Enum.Channel;
-import com.example.notificationproject.service.messaging.BaseMessagingService;
-import com.example.notificationproject.service.messaging.EmailMessagingService;
-import com.example.notificationproject.service.messaging.FirebaseMessagingServiceService;
-import com.example.notificationproject.service.messaging.TelegramMessagingService;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

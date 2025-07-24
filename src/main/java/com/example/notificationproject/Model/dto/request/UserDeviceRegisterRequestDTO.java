@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class RegisterUserDeviceRequestDTO {
+public class UserDeviceRegisterRequestDTO {
     @NotBlank
     public String ownerName;
 

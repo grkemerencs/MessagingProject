@@ -1,7 +1,7 @@
 package com.example.notificationproject.aspect;
 
 import com.example.notificationproject.Model.entity.Log;
-import com.example.notificationproject.service.LogService;
+import com.example.notificationproject.service.database.LogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

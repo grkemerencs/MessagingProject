@@ -2,10 +2,13 @@ package com.example.notificationproject.service;
 
 import com.example.notificationproject.Model.dto.request.NotificationRequestDTO;
 import com.example.notificationproject.Model.entity.MessageTemplate;
+import com.example.notificationproject.mapper.NotificationRequestMapper;
 import com.example.notificationproject.service.database.MessageTemplateService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -24,6 +27,7 @@ class MessageConstructorServiceTest {
 
     @Mock
     private MessageTemplateService messageTemplateService;
+    private final NotificationRequestMapper notificationRequestMapper = Mappers.getMapper(NotificationRequestMapper.class);
 
     private ObjectMapper objectMapper;
 
@@ -43,10 +47,10 @@ class MessageConstructorServiceTest {
         messageTemplate.setTitle_template("merhaba ${name},");
         messageTemplate.setBody_template("${site}'e en yakın zamanda bekleniyorsunuz");
 
-        Mockito.when(messageTemplateService.getTemplateEntityByName(anyString())).thenReturn(messageTemplate);
+        Mockito.when(messageTemplateService.getMessageTemplateByName(anyString())).thenReturn(messageTemplate);
         List<String> actualAnswers = new ArrayList<>(List.of("merhaba Görkem,",
                 "Hacetteepe'e en yakın zamanda bekleniyorsunuz"));
-        List<String> methodAnswers = messageConstructorService.getContent(notificationRequestDTO);
+        List<String> methodAnswers = messageConstructorService.getContent(notificationRequestMapper.toDomain(notificationRequestDTO));
         assertEquals(actualAnswers.get(0),methodAnswers.get(0));
         assertEquals(actualAnswers.get(0),methodAnswers.get(0));
     }

@@ -2,6 +2,7 @@ package com.example.notificationproject.service.database;
 
 import com.example.notificationproject.Model.dto.respond.UserDeviceRespondDTO;
 import com.example.notificationproject.Model.entity.UserDevice;
+import com.example.notificationproject.exception.DataBaseException;
 import com.example.notificationproject.exception.NotFoundException;
 import com.example.notificationproject.mapper.UserDeviceMapper;
 import com.example.notificationproject.repository.UserDeviceRepository;
@@ -22,27 +23,27 @@ public class UserDeviceService {
         return userDeviceRepository.findAll();
     }
 
-    public List<UserDevice> getAllDevices(){
-        return getAllUserDevices();
-    }
 
     public UserDevice registerUserDevice(UserDevice userDevice){
-        return userDeviceRepository.save(userDevice);
+        try {
+            return userDeviceRepository.save(userDevice);
+        } catch (Exception e){
+            throw new DataBaseException("Error in RegisterUserDevice");
+        }
     }
 
     public UserDevice getUserDeviceById(String id) {
-        return userDeviceRepository.findById(id).orElseThrow(NotFoundException.DeviceNotFound::new);
-    }
-    public final UserDevice getDeviceById(String id) {
-        return getUserDeviceById(id);
+        return userDeviceRepository.findById(id).orElseThrow(() -> new NotFoundException.UserDeviceNotFound(id));
     }
 
     public List<UserDevice> getUserDeviceById(List<String> deviceIds) {
         return userDeviceRepository.findAllById(deviceIds);
     }
-    public final List<UserDevice> getDeviceById(List<String> deviceIds) {
-        return getUserDeviceById(deviceIds);
-    }
 
+    public UserDevice deleteUserDeviceById(String id) {
+        UserDevice userDevice = getUserDeviceById(id);
+        userDeviceRepository.delete(userDevice);
+        return userDevice;
+    }
 
 }

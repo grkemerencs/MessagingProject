@@ -1,7 +1,8 @@
-package com.example.notificationproject.service;
+package com.example.notificationproject.service.database;
 
 import com.example.notificationproject.Model.entity.Log;
 import com.example.notificationproject.repository.LogRepository;
+import com.google.firebase.database.DatabaseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,15 @@ public class LogService {
     @Async
     public void saveLogAsync(Log log) {
         logRepository.save(log);
+    }
+
+    public String clearAllLogs() {
+        try{
+            logRepository.deleteAll();
+            return "all logs deleted";
+        } catch(Exception ex){
+            throw new DatabaseException("Error in clearing all logs.");
+        }
     }
 
     public List<Log> getLastNLogEntities(int n) {

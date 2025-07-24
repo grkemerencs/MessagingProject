@@ -14,11 +14,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class EmailAdress {
+public class EmailAddress {
     @Id
     private String id;
 
     @NotBlank
     @Indexed(unique = true)  // veri tabanı performansını nasıl etkiler ?
-    String emailAdress;
+    String emailAddress;
 }

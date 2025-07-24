@@ -5,6 +5,7 @@ import com.example.notificationproject.service.database.TelegramIdStateService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TelegramGetUpdateService {
 
     @Value("${telegram.bot.api-url}")
@@ -32,13 +34,12 @@ public class TelegramGetUpdateService {
             JsonNode root = objectMapper.readTree(response);
             JsonNode result = root.get("result");
 
-            if (result != null && result.isArray() && result.size() > 0) {
+            if (result != null && result.isArray() && !result.isEmpty()) {
                 List<UserTelegramAccountUpdateDTO> userTelegramAccountUpdateDTOList = new ArrayList<>();
                 long maxUpdateId = 0;
 
                 for (JsonNode node : result) {
                     JsonNode messageNode = node.get("message");
-                    System.out.println(messageNode);
                     if (messageNode == null || messageNode.get("chat") == null) continue;
 
                     JsonNode chat = messageNode.get("chat");
@@ -56,7 +57,7 @@ public class TelegramGetUpdateService {
                 }
 
                 telegramIdStateService.setState(maxUpdateId);
-                System.out.println("new telegram state is " + telegramIdStateService.getState());
+                log.info("new telegram state is {}", telegramIdStateService.getState());
                 return userTelegramAccountUpdateDTOList;
             } else {
                 return null;
