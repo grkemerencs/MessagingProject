@@ -37,13 +37,21 @@ TELEGRAM_BOT_API_URL=https://api.telegram.org/bot<your-bot-token>
 #Firebase Admin SDK kimlik doğrulaması için JSON dosyasının projenizdeki konumu
 FIREBASE_CREDENTIALS_PATH=path/to/firebase-adminsdk.json
 
-## API Endpoint Veri Beklentileri
+
+
+## API Endpoint Veri Beklentileri ve Açıklamaları
 
 ### NotificationController
 
 - **POST /notification/send**
+  - Body: NotificationRequestDTO (JSON, aşağıda örnek)
+  - Açıklama: Tek cihaza bildirim gönderir.
 - **POST /notification/send/batch**
+  - Body: NotificationRequestDTO (JSON)
+  - Açıklama: Birden fazla cihaza toplu bildirim gönderir.
 - **POST /notification/send/all**
+  - Body: NotificationRequestDTO (JSON)
+  - Açıklama: Tüm cihazlara bildirim gönderir.
 
 Beklenen JSON:
 ```json
@@ -58,17 +66,25 @@ Beklenen JSON:
   "parameters": { "key": "value" }
 }
 ```
-Açıklama:
-- `channel` ve `templateName` zorunlu.
-- Diğer alanlar isteğe bağlı.
-- Her istek kendi channelına göre olan alanı okur diğerleri boş kalabilir.
-- send/all rotasında sadece "channel", "templateName", "parameters" okunur
+- `channel` ve `templateName` zorunlu, diğer alanlar isteğe bağlıdır.
+
+---
 
 ### UserDeviceController
 
+- **GET /device**
+  - Açıklama: Tüm kullanıcı cihazlarını listeler.
 - **POST /device/register**
+  - Body: UserDeviceRegisterRequestDTO (JSON)
+  - Açıklama: Yeni bir kullanıcı cihazı kaydeder.
+- **GET /device/{id}**
+  - Path Variable: id (string)
+  - Açıklama: Belirli bir cihazı id ile getirir.
+- **DELETE /device/{id}**
+  - Path Variable: id (string)
+  - Açıklama: Belirli bir cihazı id ile siler.
 
-Beklenen JSON:
+Kayıt için beklenen JSON:
 ```json
 {
   "ownerName": "string",
@@ -76,28 +92,47 @@ Beklenen JSON:
   "fireBaseToken": "string"
 }
 ```
-Açıklama:
-- Tüm alanlar zorunlu.
+
+---
 
 ### EmailAdressController
 
+- **GET /email**
+  - Açıklama: Tüm e-posta adreslerini listeler.
 - **POST /email/register**
+  - Body: EmailAddressRegisterRequestDTO (JSON)
+  - Açıklama: Yeni bir e-posta adresi kaydeder.
+- **GET /email/{id}**
+  - Path Variable: id (string)
+  - Açıklama: Belirli bir e-posta adresini id ile getirir.
+- **DELETE /email/{id}**
+  - Path Variable: id (string)
+  - Açıklama: Belirli bir e-posta adresini id ile siler.
 
-Beklenen JSON:
+Kayıt için beklenen JSON:
 ```json
 {
   "emailAddress": "string"
 }
 ```
-Açıklama:
-- `emailAddress` zorunlu.
 
+---
 
 ### MessageTemplateController
 
+- **GET /templates**
+  - Açıklama: Tüm mesaj şablonlarını listeler.
 - **POST /templates**
+  - Body: MessageTemplateRegisterRequestDTO (JSON)
+  - Açıklama: Yeni bir mesaj şablonu kaydeder.
+- **GET /templates/{name}**
+  - Path Variable: name (string)
+  - Açıklama: Belirli bir şablonu isme göre getirir.
+- **DELETE /templates/{name}**
+  - Path Variable: name (string)
+  - Açıklama: Belirli bir şablonu isme göre siler.
 
-Beklenen JSON:
+Kayıt için beklenen JSON:
 ```json
 {
   "name": "string",
@@ -105,15 +140,24 @@ Beklenen JSON:
   "body_template": "string"
 }
 ```
-Açıklama:
-- Tüm alanlar zorunlu.
 
+---
 
 ### UserTelegramAccountController
 
+- **GET /telegram**
+  - Açıklama: Tüm Telegram hesaplarını listeler.
 - **POST /telegram/register**
+  - Body: UserTelegramAccount (JSON)
+  - Açıklama: Yeni bir Telegram hesabı kaydeder.
+- **GET /telegram/{id}**
+  - Path Variable: id (string)
+  - Açıklama: Belirli bir Telegram hesabını id ile getirir.
+- **DELETE /telegram/{id}**
+  - Path Variable: id (string)
+  - Açıklama: Belirli bir Telegram hesabını id ile siler.
 
-Beklenen JSON:
+Kayıt için beklenen JSON:
 ```json
 {
   "id": "string (opsiyonel, genellikle null)",
@@ -121,13 +165,19 @@ Beklenen JSON:
   "telegramId": 123456789
 }
 ```
-Açıklama:
-- `name` ve `telegramId` zorunlu.
-- `id` genellikle null gönderilir.
 
+---
 
 ### LogController
 
-- Sadece Notification Loglarını tutar.
-- GET ve DELETE endpointleri parametre veya body beklemez.
-- Sadece path variable olarak `/logs/{count}` endpointinde `count` (int) beklenir.
+- **GET /logs/{count}**
+  - Path Variable: count (int)
+  - Açıklama: Son N log kaydını getirir.
+- **GET /logs/all**
+  - Açıklama: Tüm log kayıtlarını getirir.
+- **DELETE /logs/all**
+  - Açıklama: Tüm log kayıtlarını siler.
+
+---
+
+> Tüm endpointler için detaylı örnekler ve enum değerleri için ilgili Java dosyalarına bakınız. 
